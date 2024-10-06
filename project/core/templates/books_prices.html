@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Books with prices</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</head>
+	<body>
+		<!--for each author we sent specific values 
+			so we list each author and the values next to each other  
+		-->
+		<ul>
+			{% for author in authors %}
+			<li style="margin-bottom: 1vh">
+				{{ author.first_name }} {{ author.last_name }} // Ελάχιστη τιμή βιβλίου = {{author.min_price}} , Μέγιστη τιμή
+				βιβλίου ={{author.max_price}} , Μέση τιμή βιβλίου = {{author.avg_price}}
+			</li>
+			{% endfor %}
+		</ul>
+	</body>
+</html>

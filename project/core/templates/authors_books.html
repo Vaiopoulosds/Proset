@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Authors and their books</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style>
+			body {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			table {
+				border-style: solid;
+				border-width: 1px;
+				border-color: grey;
+				margin-bottom: 1vh;
+			}
+			th,
+			td {
+				border-bottom-style: dotted;
+				border-width: 1px;
+				border-color: grey;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- we create a table for each author ( so the table goes inside the authors for loop ) 
+			for each table we use the author that comes from the authors imported from our views 
+			at the head we have he author's name and last name 
+			at the body we access the book_set of the particular author and we add the table tada ( each entry - one book )
+		-->
+		{% for author in authors %}
+		<table>
+			<tr>
+				<th>{{ author.first_name }} {{ author.last_name }}</th>
+			</tr>
+			{% for book in author.book_set.all %}
+			<tr>
+				<td>{{ book }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		{% endfor %}
+	</body>
+</html>

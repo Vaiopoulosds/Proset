@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Books</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style>
+			body {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			table {
+				border-style: solid;
+				border-width: 1px;
+				border-color: grey;
+				margin-bottom: 1vh;
+			}
+			th {
+				background-color: rgb(214, 214, 214);
+				cursor: pointer;
+			}
+			td {
+				border-bottom-style: dotted;
+				border-width: 1px;
+				border-color: grey;
+			}
+			.asc::after {
+				content: " ↑";
+			}
+			.desc::after {
+				content: " ↓";
+			}
+			#pagination {
+				display: flex;
+				flex-direction: row;
+				width: 100%;
+				justify-content: space-around;
+			}
+		</style>
+	</head>
+	<body>
+		<!--we create a button for new Book creation that sends you to the form to create a book using the url tag to create the link for the view_name 
+            a table using the books passed from the view we add an edit button to go to the update page
+            we create a search form , when submited it sends a GET method and the search params at the endpoint of book_list
+            the table headers is of type link , we use the styling to remove the blue- underilned style
+            on the href we provide the order_by at the link and a new request is placed on the book_list endepoint we apply the class depending the direction to give visual feedback to the user
+			using the page object we create with the paginator get page and provide through the context we display and use the pagination keys 
+			( each of the key keeps the filtering or searching patterns already added to the link and provides new page count to be rendered )
+			and so a new request is made at the endpoint book_list
+        -->
+		<a href="{% url 'create_book' %}" style="text-decoration: none">
+			<button>Create New Book</button>
+		</a>
+
+		<form method="GET" action="{% url 'book_list' %}" style="margin: 2vh">
+			<input type="text" name="search" placeholder="Search by title" value="{{ search_query }}" />
+			<button type="submit">Search</button>
+		</form>
+
+		<table>
+			<tr>
+				<th>
+					<a
+						style="text-decoration: none; color: black"
+						href="?order_by=title&direction={% if order_by == 'title' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+					>
+						Title {% if order_by == 'title' %}
+						<span class="{% if direction == 'asc' %}asc{% else %}desc{% endif %}"></span>
+						{% endif %}
+					</a>
+				</th>
+				<th>
+					<a
+						style="text-decoration: none; color: black"
+						href="?order_by=description&direction={% if order_by == 'description' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+					>
+						Description {% if order_by == 'description' %}
+						<span class="{% if direction == 'asc' %}asc{% else %}desc{% endif %}"></span>
+						{% endif %}
+					</a>
+				</th>
+				<th>
+					<a
+						style="text-decoration: none; color: black"
+						href="?order_by=author__first_name&direction={% if order_by == 'author__first_name' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+					>
+						Author {% if order_by == 'author__first_name' %}
+						<span class="{% if direction == 'asc' %}asc{% else %}desc{% endif %}"></span>
+						{% endif %}
+					</a>
+				</th>
+				<th>
+					<a
+						style="text-decoration: none; color: black"
+						href="?order_by=pub_date&direction={% if order_by == 'pub_date' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+					>
+						Publication Date {% if order_by == 'pub_date' %}
+						<span class="{% if direction == 'asc' %}asc{% else %}desc{% endif %}"></span>
+						{% endif %}
+					</a>
+				</th>
+				<th>
+					<a
+						style="text-decoration: none; color: black"
+						href="?order_by=category__name&direction={% if order_by == 'category__name' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+					>
+						Category {% if order_by == 'category__name' %}
+						<span class="{% if direction == 'asc' %}asc{% else %}desc{% endif %}"></span>
+						{% endif %}
+					</a>
+				</th>
+				<th>
+					<a
+						style="text-decoration: none; color: black"
+						href="?order_by=price&direction={% if order_by == 'price' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+					>
+						Price {% if order_by == 'price' %}
+						<span class="{% if direction == 'asc' %}asc{% else %}desc{% endif %}"></span>
+						{% endif %}
+					</a>
+				</th>
+				<th>Action</th>
+			</tr>
+			{% for book in books %}
+			<tr>
+				<td>{{ book.title }}</td>
+				<td>{{ book.description }}</td>
+				<td>{{ book.author.first_name }} {{book.author.last_name}}</td>
+				<td>{{ book.pub_date}}</td>
+				<td>{{ book.category.name }}</td>
+				<td>{{ book.price }}</td>
+				<td><a href="{% url 'update_book' book.pk %}">Edit</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+		<div id="pagination">
+			{% if page_obj.has_previous %}
+
+			<a
+				href="?page=1&order_by={{ order_by }}&direction={{ direction }}&search={{ search_query }}"
+				style="text-decoration: none"
+				><button>First</button></a
+			>
+
+			<a
+				href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}&search={{ search_query }}"
+				style="text-decoration: none"
+				><button>Previous</button></a
+			>
+			{%else %}
+
+			<a style="text-decoration: none"><button disabled>First</button></a>
+
+			<a style="text-decoration: none"><button disabled>Previous</button></a>
+
+			{% endif %} Page {{ page_obj.number }} of {{page_obj.paginator.num_pages}} {% if page_obj.has_next %}
+
+			<a
+				href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}&search={{ search_query }}"
+				style="text-decoration: none"
+				><button>Next</button></a
+			>
+
+			<a
+				href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}&search={{ search_query }}"
+				style="text-decoration: none"
+				><button>Last</button></a
+			>
+			{%else%}
+			<a style="text-decoration: none"><button disabled>Next</button></a>
+
+			<a style="text-decoration: none"><button disabled>Last</button></a>
+			{% endif %}
+		</div>
+	</body>
+</html>

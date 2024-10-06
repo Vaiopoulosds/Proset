@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Books with categories</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</head>
+	<body>
+		<!-- we print a list of books and the respective category next to each 
+            we access the category throught the book object ( cause we selected the related so it is only 1 )
+        -->
+		<ul>
+			{% for book in books %}
+			<li>{{book.title}} - {{book.category.name}}</li>
+			{% endfor %}
+		</ul>
+	</body>
+</html>
